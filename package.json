@@ -1,0 +1,51 @@
+{
+  "name": "repairworth-mcp",
+  "version": "0.1.0",
+  "mcpName": "io.github.repairworth/repairworth-mcp",
+  "description": "MCP server that checks the arithmetic of a US auto repair quote (total against itemized lines, two quotes side by side, towing, maintenance reserve) and looks up state auto repair estimate laws. It holds no market price.",
+  "homepage": "https://repairworth.com/car-repair-estimate/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/repairworth/repairworth-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/repairworth/repairworth-mcp/issues"
+  },
+  "type": "module",
+  "main": "src/server.js",
+  "bin": {
+    "repairworth-mcp": "bin/repairworth-mcp.js"
+  },
+  "files": [
+    "bin",
+    "src",
+    "vendor",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test",
+    "sync": "node scripts/sync.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "auto-repair",
+    "car-repair",
+    "repair-estimate",
+    "repair-quote",
+    "towing",
+    "car-maintenance",
+    "consumer-law",
+    "open-data",
+    "claude"
+  ],
+  "author": "RepairWorth (https://repairworth.com/)",
+  "license": "SEE LICENSE IN LICENSE",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.31.0"
+  }
+}

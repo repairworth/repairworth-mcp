@@ -1,0 +1,3 @@
+# The dataset is checked byte for byte against vendor/SOURCE.json: no line-ending conversion.
+vendor/*.csv -text
+vendor/engine.cjs -text

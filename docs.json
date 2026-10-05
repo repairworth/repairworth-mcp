@@ -1,0 +1,14 @@
+{
+  "$schema": "https://docs.page/schema.json",
+  "name": "repairworth-mcp",
+  "description": "MCP server: checks the arithmetic of a US auto repair quote and looks up state auto repair estimate laws. It holds no market price.",
+  "sidebar": [
+    {
+      "group": "repairworth-mcp",
+      "pages": [
+        { "title": "Overview", "href": "/" },
+        { "title": "Tools", "href": "/tools" }
+      ]
+    }
+  ]
+}

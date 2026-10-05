@@ -1,0 +1,12 @@
+{
+  "notice": "DO NOT EDIT. Synced from the repairworth.com sources by scripts/sync.mjs.",
+  "engine": {
+    "file": "engine.cjs",
+    "header_lines": 2,
+    "sha256": "e8d22378c32ed0d8e3742aad892b06787e401e744d73064840a7eeecb340c3bf"
+  },
+  "dataset": {
+    "file": "us-state-auto-repair-estimate-laws.csv",
+    "sha256": "cbd0376c6241cf99fa7c9683682d82844e2cb7f71ec2356b7cb1903cd6580e6e"
+  }
+}

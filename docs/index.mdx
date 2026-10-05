@@ -1,0 +1,69 @@
+---
+title: Overview
+description: What repairworth-mcp is, how to install it and how to read a result.
+---
+
+# repairworth-mcp
+
+`repairworth-mcp` is a Model Context Protocol server over stdio. It exposes the calculation engine of the
+RepairWorth [car repair estimate checker](https://repairworth.com/car-repair-estimate/) (RepairWorth is an
+independent publication that helps drivers read a US auto repair quote before they pay) as four calculation
+tools. A fifth tool looks up one state in a dataset of state laws on auto repair estimates.
+
+The engine is the site's own, copied unchanged into the package. A test suite replays the calls of the engine's
+test suite through the MCP tools and requires identical results.
+
+## Before you use a result
+
+- The server holds no market price and no typical range. It does not say what a repair should cost or whether a
+  quote is fair.
+- Every dollar amount in a result was computed from an amount the caller supplied.
+- `unknown`, `included` and `not-applicable` are statuses of a line. None of them is counted as zero.
+- The state-law tool is not legal advice. Verify the official text, which each row links to.
+
+## Install
+
+Node.js 18 or later. The package is not on npm yet: install it from the GitHub repository.
+
+```bash
+git clone https://github.com/repairworth/repairworth-mcp.git
+cd repairworth-mcp
+npm ci
+```
+
+Claude Desktop (`claude_desktop_config.json`), with the absolute path of your clone:
+
+```json
+{
+  "mcpServers": {
+    "repairworth": {
+      "command": "node",
+      "args": ["/absolute/path/to/repairworth-mcp/bin/repairworth-mcp.js"]
+    }
+  }
+}
+```
+
+Claude Code:
+
+```bash
+claude mcp add repairworth -- node /absolute/path/to/repairworth-mcp/bin/repairworth-mcp.js
+```
+
+## How a call behaves
+
+- A dollar amount is a number, or a string such as `"85"`, `"85.50"` or `"$1,234.50"`, with two decimals at most.
+- An unknown key is refused rather than ignored, so a misspelt input cannot change a total silently.
+- An input the engine refuses returns `isError: true` with the engine's own result: `valid: false` and an
+  `errors` list whose messages are the ones the site shows.
+- A successful call returns the engine's result as JSON. Amounts are integer US cents.
+
+## Where the tools come from
+
+`analyze_quote` and `compare_quotes` run the same functions as the car repair estimate checker linked above, the
+page that also publishes the state-law table. `towing_estimate` runs the function of the site's
+[towing cost calculator](https://repairworth.com/towing/cost-calculator/), and `maintenance_plan` the one of its
+[maintenance cost planner](https://repairworth.com/maintenance/cost-planner/). The sources behind RepairWorth data
+are listed on its [data sources page](https://repairworth.com/data-sources/).
+
+See [Tools](/tools) for the inputs and the fields of each result.

@@ -1,0 +1,89 @@
+---
+title: Tools
+description: The five tools of repairworth-mcp, their inputs and the fields of their results.
+---
+
+# Tools
+
+Amounts go in as US dollars (a number, or a string such as `"85.50"` or `"$1,234.50"`) and come back as integer
+US cents. A result with `valid: false` carries the engine's `errors` and is returned with `isError: true`.
+
+## analyze_quote
+
+Checks one auto repair quote from the amounts read on it.
+
+| Input | Meaning |
+|---|---|
+| `totalMode` | `fixed`, `range`, `unknown`, `included` or `not-applicable`. Default `unknown`: the known lines are summed instead. |
+| `totalLow`, `totalHigh` | The communicated total, or the two bounds of a range. |
+| `lines` | The itemized lines. Each has a `key`, a `label`, a `mode`, `low` and `high`, an optional `sign` (`-1` for a credit) and an optional `conditionalRefund` (`true` for a refundable charge such as a core charge). |
+
+| Result field | Meaning |
+|---|---|
+| `basis` | `communicated-total`, `complete-known-breakdown` or `partial-known-breakdown`. |
+| `displayLowCents`, `displayHighCents` | The total the quote supports. |
+| `knownLowCents`, `knownHighCents` | Sum of the lines that carry an amount, credits subtracted. |
+| `unknown` | Lines the quote gives no amount for. |
+| `reconciliation` | Communicated total minus itemized lines, as an interval. `null` unless the total and every line are known. |
+| `refundLowCents`, `afterRefundLowCents` and their `High` twins | The refundable amounts, and the total once they are returned. |
+
+A quote with no communicated total and no known line is refused: the engine has nothing to add up.
+
+## compare_quotes
+
+Compares quote `a` and quote `b`, each shaped like the input of `analyze_quote`. The optional `scopes` holds, for
+`a` and for `b`, what the quote says about each scope item: `not-specified`, `included`, `excluded` or
+`not-applicable`.
+
+| Result field | Meaning |
+|---|---|
+| `deltaLowCents`, `deltaHighCents` | B minus A. An interval when a quote is a range. |
+| `direction` | `equal`, `overlap`, `a-higher` or `b-higher`. Overlapping ranges give `overlap`: no quote is reported as lower. |
+| `lineDifferences` | One entry per line `key`: `same-amount`, `amount-differs`, `status-differs`, `only-in-a`, `only-in-b`, `both-unspecified` or `same-status`. |
+| `scopeDifferences`, `comparableScope` | The scope items stated differently. `comparableScope` is true when there is none. |
+| `a`, `b` | The `analyze_quote` result of each quote. |
+
+## maintenance_plan
+
+Spreads planned services over a horizon. The services, their months and their prices come from the caller: the
+engine holds no maintenance schedule, no service interval and no price.
+
+| Input | Meaning |
+|---|---|
+| `months` | Horizon in whole months, 1 to 240. Required. |
+| `reserveMonthly` | Optional amount set aside each month. |
+| `events` | At most 24 services, each with `label`, `month` (inside the horizon), `low` and an optional `high`. |
+
+The result lists the services in month order, then `plannedLowCents` and `plannedHighCents`, `reserveTotalCents`,
+`totalLowCents` and `totalHighCents`, and `monthlyLowCents` and `monthlyHighCents`. `totalIsPartial` is true when
+no reserve was given, and `monthlyRounded` when the monthly amount was rounded to the cent.
+
+## towing_estimate
+
+Rebuilds a towing quote from its own terms.
+
+| Input | Meaning |
+|---|---|
+| `base` | Base or hook-up fee. Required. |
+| `includedDistance` | Distance covered by the base fee. Required, `0` when none. |
+| `totalDistance` | Total distance of the tow. Required. |
+| `perDistance` | Rate per mile or per kilometer. Required. |
+| `fees` | Other fees. Optional: when left out, `totalIsPartial` is true. |
+| `unit` | `mi` or `km`, for the two distances and the rate. Required. |
+
+The result gives `billableMiles`, `mileageCents`, `totalCents` and the flags `totalIsPartial` and
+`mileageRounded`. Distances come back in miles.
+
+## state_estimate_law
+
+Takes `state`, a two-letter USPS code for one of the 50 states or `DC`. Returns:
+
+| Field | Content |
+|---|---|
+| `law` | The row of the dataset "U.S. State Auto Repair Estimate Laws", as published: `status`, `statute_citation`, `official_url`, the estimate rules, `verified_quote`, `checked_on` and `note`. |
+| `status_meaning` | What the row's status means: `verified`, `no_statute_found` or `lead`. |
+| `disclaimer` | "Not legal advice. Verify the official text." and the reasons why. |
+| `notes` | An empty value means "not established from the source read", not "no rule". Only state-level law is covered. |
+| `dataset` | Title, publisher, license (CC BY 4.0), number of rows, date of the latest check and SHA-256 of the file. |
+
+An unknown code returns `isError: true` with the list of accepted codes.

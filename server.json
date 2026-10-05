@@ -1,0 +1,22 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.repairworth/repairworth-mcp",
+  "title": "RepairWorth Auto Repair Quote Checker",
+  "description": "Checks US auto repair quote arithmetic and looks up state repair estimate laws. No market price.",
+  "version": "0.1.0",
+  "websiteUrl": "https://repairworth.com/car-repair-estimate/",
+  "repository": {
+    "url": "https://github.com/repairworth/repairworth-mcp",
+    "source": "github"
+  },
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "repairworth-mcp",
+      "version": "0.1.0",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}
