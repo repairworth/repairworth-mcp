@@ -70,6 +70,18 @@ test("initialize reports the package name and version and the tools capability",
   assert.equal(typeof initialized.result.protocolVersion, "string");
 });
 
+test("tools/list gives every tool a title and four explicit annotation booleans; initialize carries instructions", async () => {
+  const { tools } = (await request("tools/list", {})).result;
+  assert.equal(tools.length, 5);
+  for (const tool of tools) {
+    assert.equal(typeof tool.title, "string", tool.name);
+    assert.ok(tool.title.length > 3, tool.name);
+    assert.deepEqual(tool.annotations, { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }, tool.name);
+  }
+  assert.equal(typeof initialized.result.instructions, "string");
+  assert.ok(initialized.result.instructions.length > 80);
+});
+
 test("tools/list returns the five tools with an object schema and a description", async () => {
   const { tools } = (await request("tools/list", {})).result;
   assert.deepEqual(tools.map((t) => t.name), Object.keys(SAMPLES));

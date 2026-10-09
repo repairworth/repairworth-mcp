@@ -1,6 +1,6 @@
 {
   "name": "repairworth-mcp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "mcpName": "io.github.repairworth/repairworth-mcp",
   "description": "MCP server that checks the arithmetic of a US auto repair quote (total against itemized lines, two quotes side by side, towing, maintenance reserve) and looks up state auto repair estimate laws. It holds no market price.",
   "homepage": "https://repairworth.com/car-repair-estimate/",

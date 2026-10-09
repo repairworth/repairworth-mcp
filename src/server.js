@@ -7,16 +7,19 @@ import { tools } from "./tools.js";
 const pkg = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
 const toolsByName = new Map(tools.map((t) => [t.name, t]));
 
+const INSTRUCTIONS =
+  "Checks the arithmetic of a US auto repair quote written by a shop, and looks up state laws on written repair estimates. It returns no market price: every figure comes from the amounts you supply or from the embedded state-law dataset. Calculator results are in whole cents, and the state law summaries are not legal advice.";
+
 const errorResult = (message) => ({
   content: [{ type: "text", text: JSON.stringify({ error: message }) }],
   isError: true,
 });
 
 export function createServer() {
-  const server = new Server({ name: pkg.name, version: pkg.version }, { capabilities: { tools: {} } });
+  const server = new Server({ name: pkg.name, version: pkg.version }, { capabilities: { tools: {} }, instructions: INSTRUCTIONS });
 
   server.setRequestHandler(ListToolsRequestSchema, async () => ({
-    tools: tools.map((t) => ({ name: t.name, description: t.description, inputSchema: t.inputSchema })),
+    tools: tools.map((t) => ({ name: t.name, title: t.title, description: t.description, inputSchema: t.inputSchema, annotations: t.annotations })),
   }));
 
   server.setRequestHandler(CallToolRequestSchema, async (request) => {

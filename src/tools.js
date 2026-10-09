@@ -83,6 +83,8 @@ function quoteProblem(quote, where) {
 
 const analyzeQuote = {
   name: "analyze_quote",
+  title: "Analyze a Repair Quote",
+  annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
   description: `Checks the arithmetic of one US auto repair quote or estimate from the amounts read on it: the communicated total and the itemized lines (parts, labor, fees, tax, credits, refundable core charges). Returns the result of the repairworth.com engine unchanged: \`basis\` (communicated-total, complete-known-breakdown or partial-known-breakdown), the total the quote supports (\`displayLowCents\`, \`displayHighCents\`), the sum of the known lines, the lines with no amount (\`unknown\`), the refundable amounts, and \`reconciliation\`, the gap between the communicated total and the itemized lines, given only when every line is known. Amounts come back in integer US cents. ${NO_PRICE} ${REFUSAL}`,
   inputSchema: { type: "object", properties: quoteProperties, additionalProperties: false },
   handler(args) {
@@ -104,6 +106,8 @@ const compareProperties = {
 
 const compareQuotes = {
   name: "compare_quotes",
+  title: "Compare Two Repair Quotes",
+  annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
   description: `Compares two US auto repair quotes for the same job, A and B, from the amounts read on them. Returns the result of the repairworth.com engine unchanged: \`deltaLowCents\` and \`deltaHighCents\` (B minus A, an interval when a quote is a range), \`direction\` (equal, overlap, a-higher or b-higher), \`lineDifferences\` (lines matched by \`key\`: same-amount, amount-differs, status-differs, only-in-a, only-in-b, both-unspecified, same-status) and the scope items the two quotes state differently (\`scopeDifferences\`, \`comparableScope\`). When the two ranges overlap the direction is \`overlap\` and no quote is reported as lower. The tool names no winner: a price gap only compares like with like when \`comparableScope\` is true. Amounts come back in integer US cents. ${NO_PRICE} ${REFUSAL}`,
   inputSchema: { type: "object", properties: compareProperties, required: ["a", "b"], additionalProperties: false },
   handler(args) {
@@ -143,6 +147,8 @@ const maintenanceProperties = {
 
 const maintenancePlan = {
   name: "maintenance_plan",
+  title: "Build a Maintenance Plan",
+  annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
   description: `Turns the maintenance services a driver already has a price for, plus an optional monthly reserve, into a total and a monthly amount over a planning horizon. Every service, month and amount comes from the caller: the engine holds no maintenance schedule, no service interval and no price, and it adds none. Returns the result of the repairworth.com engine unchanged: the services in month order, \`plannedLowCents\` and \`plannedHighCents\`, the reserve over the horizon, \`totalLowCents\` and \`totalHighCents\`, the monthly amounts, and the flags \`totalIsPartial\` and \`monthlyRounded\`. Amounts come back in integer US cents. ${REFUSAL}`,
   inputSchema: { type: "object", properties: maintenanceProperties, required: ["months"], additionalProperties: false },
   handler(args) {
@@ -178,6 +184,8 @@ const towingProperties = {
 
 const towingEstimate = {
   name: "towing_estimate",
+  title: "Rebuild a Towing Quote",
+  annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
   description: `Rebuilds a towing quote or invoice from its own terms: base fee, distance covered by the base fee, total distance, rate per mile or per kilometer, and other fees. Every rate comes from the quote being checked. Returns the result of the repairworth.com engine unchanged: \`billableMiles\`, \`mileageCents\`, \`totalCents\`, and the flags \`totalIsPartial\` (other fees unknown) and \`mileageRounded\`. Distances come back in miles and amounts in integer US cents. ${NO_PRICE} ${REFUSAL}`,
   inputSchema: {
     type: "object",
@@ -197,6 +205,8 @@ const lawProperties = {
 
 const stateEstimateLaw = {
   name: "state_estimate_law",
+  title: "Look Up a State Estimate Law",
+  annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
   description: `Looks up one US state, or the District of Columbia, in the dataset "U.S. State Auto Repair Estimate Laws" published by RepairWorth. Returns the row as published: its \`status\` (verified, no_statute_found or lead), the statute citation, the URL of the official state source, the rules on written estimates, on exceeding the estimate without new consent and on returning replaced parts, a verbatim quote of the official text, and the date it was checked. An empty value means "not established from the source read", not "no rule". Only state-level law is covered. ${DISCLAIMER}`,
   inputSchema: { type: "object", properties: lawProperties, required: ["state"], additionalProperties: false },
   handler(args) {
