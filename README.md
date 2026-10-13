@@ -17,22 +17,22 @@ suite checks that each tool returns what the engine returns.
 
 ## Install
 
-Requires Node.js 18 or later. The package is not on npm yet: install it from this repository.
+Requires Node.js 18 or later. Run it with `npx` (no install step), or install it globally:
 
 ```bash
-git clone https://github.com/repairworth/repairworth-mcp.git
-cd repairworth-mcp
-npm ci
+npx -y repairworth-mcp
+# or
+npm install -g repairworth-mcp
 ```
 
-Claude Desktop (`claude_desktop_config.json`), with the absolute path of your clone:
+Claude Desktop (`claude_desktop_config.json`):
 
 ```json
 {
   "mcpServers": {
     "repairworth": {
-      "command": "node",
-      "args": ["/absolute/path/to/repairworth-mcp/bin/repairworth-mcp.js"]
+      "command": "npx",
+      "args": ["-y", "repairworth-mcp"]
     }
   }
 }
@@ -41,8 +41,11 @@ Claude Desktop (`claude_desktop_config.json`), with the absolute path of your cl
 Claude Code:
 
 ```bash
-claude mcp add repairworth -- node /absolute/path/to/repairworth-mcp/bin/repairworth-mcp.js
+claude mcp add repairworth -- npx -y repairworth-mcp
 ```
+
+From source: `git clone https://github.com/repairworth/repairworth-mcp.git`, then `npm ci` and
+`node bin/repairworth-mcp.js`.
 
 ## Tools
 
